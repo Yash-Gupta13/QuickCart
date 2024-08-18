@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 
-import { connectDb } from "./config/index.js";
+import { connectDb } from "./config/database.config.js";
 import { app } from "./app.js";
 
 
@@ -16,6 +16,12 @@ connectDb()
     console.log(`Database connection Failed` , error);
 });
 
+
+//* Route section
+
+import userRouter from './routes/user.routes.js'
+
+app.use('/api/users',userRouter)
 
 
 
