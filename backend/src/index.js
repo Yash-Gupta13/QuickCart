@@ -17,13 +17,6 @@ connectDb()
 });
 
 
-//* Route section
-
-import userRouter from './routes/user.routes.js'
-
-app.use('/api/users',userRouter)
-
-
 
 
 
