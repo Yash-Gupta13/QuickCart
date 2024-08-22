@@ -69,7 +69,7 @@ userSchema.methods.generateAccessToken = async function () {
   );
 };
 
-//? for generating the refresh token 
+//? for generating the refresh token
 
 userSchema.methods.generateRefreshToken = async function () {
   return await jwt.sign(
@@ -82,7 +82,5 @@ userSchema.methods.generateRefreshToken = async function () {
     }
   );
 };
-
-
 
 export const User = mongoose.model("User", userSchema);
