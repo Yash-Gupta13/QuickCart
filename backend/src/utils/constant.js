@@ -1,5 +1,6 @@
 export const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: process.env.NODE_ENV !== "development",
-  sameSite: "strict",
+  secure: false, // do true in lie site
+  sameSite: "Strict",
 };
+
