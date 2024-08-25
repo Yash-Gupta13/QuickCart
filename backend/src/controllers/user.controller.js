@@ -5,6 +5,8 @@ import { asyncHandler } from "../utils/asyncHandler.util.js";
 import { COOKIE_OPTIONS } from "../utils/constant.js";
 import jwt from 'jsonwebtoken'
 
+
+//! generating the refresh and accesstoken
 const generateAcessAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -30,6 +32,8 @@ const generateAcessAndRefreshToken = async (userId) => {
       );
   }
 };
+
+//! creating the user when it came for first time
 
 const registerUser = asyncHandler(async (req, res) => {
   const { username, email, password } = req.body;
@@ -67,6 +71,10 @@ const registerUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User Register Successfully", createdUser));
 });
 
+
+//! login user
+
+
 const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
@@ -103,6 +111,9 @@ const loginUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User LoggedIn Successfully", loggedInUser));
 });
 
+
+//! logging out the user
+
 const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
@@ -124,6 +135,9 @@ const logoutUser = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, "User logout Successfully"));
 });
 
+
+//! fetch all user
+
 const getAllUser = asyncHandler(async (req, res) => {
   const users = await User.find({});
 
@@ -137,6 +151,9 @@ const getAllUser = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, "All Users Fetched Successfully ", users));
 });
+
+
+//! refreshing access token 
 
 
 const refreshAccessToken = asyncHandler(async(req, res)=>{
@@ -187,7 +204,56 @@ const refreshAccessToken = asyncHandler(async(req, res)=>{
     
 })
 
+//! getting current user profile
+
+const getCurrentUserProfile = asyncHandler(async (req, res) => {
+    // const user = await User.findById(req.user?._id).select("-password -refreshToken");
+
+    // if(!user){
+    //     return res
+    //     .status(401)
+    //     .json(new ApiError(401 , "Please login"));
+    // }
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200 , "User fetched Successfullt" , req.user));
+});
+
+
+//! change current password
+
+const changeOldPassword = asyncHandler(async(req, res)=>{
+    const {oldPassword , newPassword} = req.body;
+
+    const user = await User.findById(req.user?._id);
+
+    const oldPasswordCorrect = await user.isPasswordCorrect(oldPassword);
+
+    if(!oldPasswordCorrect){
+        return res
+        .status(400)
+        .json(new ApiError(400 , "Password is Invalid."));
+    }
+
+    user.password = newPassword;
+
+    await user.save({
+        validateBeforeSave:false
+    })
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200 , "Password change Successfully.", {}));
+})
+
+
+//! updating the use info
 
 
 
-export { registerUser, loginUser, logoutUser, getAllUser, refreshAccessToken };
+
+
+
+
+export { registerUser, loginUser, logoutUser, getAllUser, refreshAccessToken, getCurrentUserProfile };
