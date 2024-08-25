@@ -6,6 +6,8 @@ import {
   getAllUser,
   refreshAccessToken,
   getCurrentUserProfile,
+  changeOldPassword,
+  updateUserProfileInfo,
 } from "../controllers/user.controller.js";
 import {
   verifyJWT,
@@ -15,12 +17,18 @@ import {
 const router = express.Router();
 
 router.route("/").post(registerUser).get(verifyJWT, authorizeAdmin, getAllUser);
+
 router.route("/login").post(loginUser);
 router.route("/logout").post(verifyJWT, logoutUser);
-router.route('/profile').get(verifyJWT , getCurrentUserProfile);
+router
+  .route("/profile")
+  .get(verifyJWT, getCurrentUserProfile)
+  .patch(verifyJWT, changeOldPassword)
+  .put(verifyJWT , updateUserProfileInfo)
 
-//?when user accesstoken is expired then user hit the link 
 
-router.route('/refresh-token').post(refreshAccessToken)
+//?when user accesstoken is expired then user hit the link
+
+router.route("/refresh-token").post(refreshAccessToken);
 
 export default router;
