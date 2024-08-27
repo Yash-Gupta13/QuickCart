@@ -299,14 +299,16 @@ const deleteUserById = asyncHandler(async(req, res)=>{
         .json(new ApiError(400, "Cannot delete Admin user"))
     }
 
-    await User.findByIdAndDelete(id);
+    const deletedUser = await User.findByIdAndDelete(id);
 
     return res
     .status(200)
-    .json(new ApiResponse(200 , "User Deleted Successfully" , {}))
+    .json(new ApiResponse(200 , "User Deleted Successfully" , deletedUser))
 
 
 })
+
+
 
 
 
