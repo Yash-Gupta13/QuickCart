@@ -9,26 +9,26 @@ import {
   changeOldPassword,
   updateUserProfileInfo,
 } from "../controllers/user.controller.js";
-import {
-  verifyJWT,
-  authorizeAdmin,
-} from "../../middlewares/auth.middleware.js";
+import { verifyJWT, authorizeAdmin } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.route("/").post(registerUser).get(verifyJWT, authorizeAdmin, getAllUser);
 
+//* unprotected route
+
+router.route("/").post(registerUser);
 router.route("/login").post(loginUser);
-router.route("/logout").post(verifyJWT, logoutUser);
-router
-  .route("/profile")
-  .get(verifyJWT, getCurrentUserProfile)
-  .patch(verifyJWT, changeOldPassword)
-  .put(verifyJWT , updateUserProfileInfo)
 
+//* protected routes
+
+router.route('/get-all-user').get(verifyJWT, authorizeAdmin, getAllUser)
+router.route("/logout").post(verifyJWT, logoutUser);
+router.route("/profile").get(verifyJWT, getCurrentUserProfile)
+router.route('/profile/change-password').post(verifyJWT, changeOldPassword)
+router.route('/profile/update-profile').patch(verifyJWT, updateUserProfileInfo);
 
 //?when user accesstoken is expired then user hit the link
-
 router.route("/refresh-token").post(refreshAccessToken);
+
 
 export default router;

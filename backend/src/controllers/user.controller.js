@@ -268,13 +268,15 @@ const updateUserProfileInfo = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .json(new ApiResponse(200, "Profile Update Successfully", user));
-      
+
   } catch (error) {
         return res
         .status(401)
         .json(new ApiError(401, "Invalid user"));
   }
 });
+
+
 
 export {
   registerUser,

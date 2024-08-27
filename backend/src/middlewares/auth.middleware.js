@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
-import { asyncHandler } from "../src/utils/asyncHandler.util.js";
-import { ApiError } from "../src/utils/ApiError.util.js";
-import { User } from "../src/models/user.model.js";
+import { asyncHandler } from "../utils/asyncHandler.util.js";
+import { ApiError } from "../utils/ApiError.util.js";
+import { User } from "../models/user.model.js";
 
 const verifyJWT = asyncHandler(async (req, res, next) => {
   //*------ Algo --------*//
@@ -54,10 +54,8 @@ const authorizeAdmin = asyncHandler(async (req, res, next) => {
   if (req.user && req.user.isAdmin) {
     next();
   } else {
-    return res
-    .status(401)
-    .json(new ApiError(401, "Not authroize as admin "));
+    return res.status(401).json(new ApiError(401, "Not authroize as admin "));
   }
 });
 
-export { verifyJWT,authorizeAdmin };
+export { verifyJWT, authorizeAdmin };
