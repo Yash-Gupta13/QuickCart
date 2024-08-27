@@ -8,6 +8,7 @@ import {
   getCurrentUserProfile,
   changeOldPassword,
   updateUserProfileInfo,
+  deleteUserById,
 } from "../controllers/user.controller.js";
 import { verifyJWT, authorizeAdmin } from "../middlewares/auth.middleware.js";
 
@@ -16,7 +17,7 @@ const router = express.Router();
 
 //* unprotected route
 
-router.route("/").post(registerUser);
+router.route("/register").post(registerUser);
 router.route("/login").post(loginUser);
 
 //* protected routes
@@ -29,6 +30,11 @@ router.route('/profile/update-profile').patch(verifyJWT, updateUserProfileInfo);
 
 //?when user accesstoken is expired then user hit the link
 router.route("/refresh-token").post(refreshAccessToken);
+
+
+//!admin routes
+
+router.route('/admin/:id').delete(verifyJWT,authorizeAdmin,deleteUserById)
 
 
 export default router;

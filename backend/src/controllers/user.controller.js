@@ -276,6 +276,38 @@ const updateUserProfileInfo = asyncHandler(async (req, res) => {
   }
 });
 
+const deleteUserById = asyncHandler(async(req, res)=>{
+    const {id} = req.params;
+
+    if(!id){
+        return res
+        .status(401)
+        .json(new ApiError(401 , "Id not found "))
+    }
+
+    const user = await User.findById(id);
+
+    if(!user){
+        return res
+        .status(404)
+        .json(new ApiError(404 , "User not found"));
+    }
+
+    if(user.isAdmin){
+        return res
+        .status(400)
+        .json(new ApiError(400, "Cannot delete Admin user"))
+    }
+
+    await User.findByIdAndDelete(id);
+
+    return res
+    .status(200)
+    .json(new ApiResponse(200 , "User Deleted Successfully" , {}))
+
+
+})
+
 
 
 export {
@@ -287,4 +319,5 @@ export {
   getCurrentUserProfile,
   changeOldPassword,
   updateUserProfileInfo,
+  deleteUserById
 };
