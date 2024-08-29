@@ -309,7 +309,50 @@ const deleteUserById = asyncHandler(async(req, res)=>{
 })
 
 
+const updateUserById = asyncHandler(async(req, res)=>{
+    const {id} = req.params;
 
+    const {username , email , isAdmin} = req.body;
+
+    if(!id){
+        return res
+        .status(401)
+        .json(new ApiError(401, "Id not found"));
+    }
+
+    try {
+        const user = await User.findById(id);
+    
+        if(!user){
+            return res
+            .status(401)
+            .json(new ApiError(404 , "User not found"));
+        }
+    
+        user.username = username || user.username;
+        user.email = email || user.email;
+        user.isAdmin = Boolean(isAdmin);
+    
+    
+        const updatedUser = await user.save();
+
+
+        const modifiedUser = await User.findById(updatedUser._id).select("-password -refreshToken");
+
+
+        return res
+          .status(200)
+          .json(new ApiResponse(200, "User updated succesfully", modifiedUser));
+
+
+
+    } catch (error) {
+        return res
+        .status(404)
+        .json(new ApiError(404 , "Something went wrong"));
+    }
+
+})
 
 
 export {
@@ -321,5 +364,6 @@ export {
   getCurrentUserProfile,
   changeOldPassword,
   updateUserProfileInfo,
-  deleteUserById
+  deleteUserById,
+  updateUserById
 };
