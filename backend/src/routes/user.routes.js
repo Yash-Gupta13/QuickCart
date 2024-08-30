@@ -23,7 +23,6 @@ router.route("/login").post(loginUser);
 
 //* protected routes
 
-router.route('/get-all-user').get(verifyJWT, authorizeAdmin, getAllUser);
 router.route("/logout").post(verifyJWT, logoutUser);
 router.route("/profile").get(verifyJWT, getCurrentUserProfile);
 router.route('/profile/change-password').post(verifyJWT, changeOldPassword);
@@ -37,6 +36,7 @@ router.route("/refresh-token").post(refreshAccessToken);
 
 router.route('/admin/:id').delete(verifyJWT,authorizeAdmin,deleteUserById);
 router.route('/admin/update-user-info/:id').patch(verifyJWT,authorizeAdmin,updateUserById);
+router.route("/get-all-user").get(verifyJWT, authorizeAdmin, getAllUser);
 
 
 export default router;
