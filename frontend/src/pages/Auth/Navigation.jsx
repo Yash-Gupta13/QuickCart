@@ -9,10 +9,15 @@ import {
 import { FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "./Navigation.css";
+import { useSelector } from "react-redux";
 
 const Navigation = () => {
   const [dropDown, setDropDown] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
+
+  console.log(useSelector(state =>state.auth));
+
+  
 
   const toggleDropDown = () => {
     setDropDown(!dropDown);

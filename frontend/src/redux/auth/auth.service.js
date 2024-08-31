@@ -1,16 +1,13 @@
-import axios from 'axios'
+import axios from "axios";
 
+const userSignIn = async (apiData) => {
+  const response = await axios.post("/api/v1/users/login", apiData);
 
- const userSignIn = async(apiData)=>{
-   const response =  await axios.post('/api/v1/users/login',apiData)
-
-   return response.data;
-}
-
-
+  return response.data;
+};
 
 const authService = {
-    userSignIn
-}
+  userSignIn,
+};
 
-export default authService
+export default authService;

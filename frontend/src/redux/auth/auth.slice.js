@@ -41,6 +41,13 @@ const authSlice = createSlice({
             state.message = action.payload.message;
             toast.success(action.payload.message);
         })
+        .addCase(userSignIn.rejected , (state, action)=>{
+            state.isLoading = false;
+            state.isSuccess = false;
+            state.isError = true;
+            state.message = action.payload;
+            toast.error(action.payload);
+        })
     }
 })
 
