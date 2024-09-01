@@ -6,8 +6,16 @@ const userSignIn = async (apiData) => {
   return response.data;
 };
 
+const userLogout = async()=>{
+  const response = await axios.post("/api/v1/users/logout",{
+    withCredentials:true
+  });
+  return response.data
+}
+
 const authService = {
   userSignIn,
+  userLogout,
 };
 
 export default authService;

@@ -9,15 +9,17 @@ import {
 import { FaHeart } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import "./Navigation.css";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogout } from "../../redux/auth/auth.slice";
 
 const Navigation = () => {
   const [dropDown, setDropDown] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
 
-  console.log(useSelector(state =>state.auth));
+  const { user } = useSelector((state) => state.auth);
 
-  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleDropDown = () => {
     setDropDown(!dropDown);
@@ -29,6 +31,12 @@ const Navigation = () => {
 
   const closeSideBar = () => {
     setShowSidebar(false);
+  };
+
+  const logoutHandler = async() => {
+    const response = await dispatch(userLogout());
+    setDropDown(false);
+    navigate('/login');
   };
 
   return (
@@ -62,7 +70,7 @@ const Navigation = () => {
           <span className="hidden nav-item-name mt-[3rem]">CART</span>
         </Link>
         <Link
-          to="/cart"
+          to="/favourites"
           className="flex items-center transition-transform  hover:translate-x-2"
         >
           <FaHeart className="mr-2 mt-[3rem]" size={26} />
@@ -70,26 +78,121 @@ const Navigation = () => {
         </Link>
       </div>
 
-      <ul>
-        <li>
-          <Link
-            to="/login"
-            className="flex items-center transition-transform  hover:translate-x-2"
+      <div className="relative">
+        <button
+          onClick={toggleDropDown}
+          className="flex items-center text-gray-8000 focus:outline-none"
+        >
+          {user ? <span>{user.username}</span> : <></>}
+          {user && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className={`h-4 w-4 ml-1 ${
+                dropDown ? "transform rotate-180" : ""
+              }`}
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="white"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d={dropDown ? "M5 15l7-7 7 7" : "M19 9l-7 7-7-7"}
+              />
+            </svg>
+          )}
+        </button>
+        {dropDown && user && (
+          <ul
+            className={`absolute right-0 mt-2 mr-14 space-y-2 bg-white text-gray-600 ${
+              !user.isAdmin ? "-top-20" : "-top-80"
+            } `}
           >
-            <AiOutlineLogin className="mr-2 mt-[3rem]" size={26} />
-            <span className="hidden nav-item-name mt-[3rem]">Login</span>
-          </Link>
-        </li>
-        <li>
-          <Link
-            to="/register"
-            className="flex items-center transition-transform  hover:translate-x-2"
-          >
-            <AiOutlineUserAdd className="mr-2 mt-[3rem]" size={26} />
-            <span className="hidden nav-item-name mt-[3rem]">Register</span>
-          </Link>
-        </li>
-      </ul>
+            {user.isAdmin && (
+              <>
+                <li>
+                  <Link
+                    to="/admin/dashboard"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/productlist"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Products
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/categorylist"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Category
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/orderlist"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Orders
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/admin/userlist"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Users
+                  </Link>
+                </li>
+              </>
+            )}
+
+            <li>
+              <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">
+                Profile
+              </Link>
+            </li>
+            <li>
+              <button
+                onClick={logoutHandler}
+                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+              >
+                Logout
+              </button>
+            </li>
+          </ul>
+        )}
+      </div>
+
+      {!user && (
+        <ul>
+          <li>
+            <Link
+              to="/login"
+              className="flex items-center transition-transform  hover:translate-x-2"
+            >
+              <AiOutlineLogin className="mr-2 mt-[3rem]" size={26} />
+              <span className="hidden nav-item-name mt-[3rem]">Login</span>
+            </Link>
+          </li>
+          <li>
+            <Link
+              to="/register"
+              className="flex items-center transition-transform  hover:translate-x-2"
+            >
+              <AiOutlineUserAdd className="mr-2 mt-[3rem]" size={26} />
+              <span className="hidden nav-item-name mt-[3rem]">Register</span>
+            </Link>
+          </li>
+        </ul>
+      )}
     </div>
   );
 };

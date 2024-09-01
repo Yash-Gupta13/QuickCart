@@ -11,11 +11,19 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const validateEmail = (email) => {
+    return /\S+@\S+\.\S+/.test(email); // Basic email validation regex
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
 
       if (!email?.trim() || !password?.trim()) {
         return toast.error("Please enter all required Field");
+      }
+
+      if(!validateEmail(email)){
+        return toast.error('Please enter a valid Email Adress')
       }
 
       const apiData = {
@@ -24,7 +32,6 @@ const Login = () => {
       };
 
       const result = await dispatch(userSignIn(apiData));
-      console.log(result)
       if(result.meta.requestStatus === "fulfilled"){
         setEmail('');
         setPassword('');

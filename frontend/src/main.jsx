@@ -7,11 +7,13 @@ import {Provider} from 'react-redux'
 import Login from './pages/Auth/Login.jsx'
 import { store,persistor } from './redux/auth/store.js'
 import { PersistGate } from 'redux-persist/integration/react'
+import Register from './pages/Auth/Register.jsx'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App/>}>
       <Route path='/login' element={<Login/>}/>
+      <Route path='/register' element={<Register/>}/>
     </Route>
   )
 )
