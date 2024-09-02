@@ -8,7 +8,7 @@ function App() {
 
   return (
    <>
-    <ToastContainer/>
+    <ToastContainer />
     <Navigation/>
     <main className='py-3'>
       <Outlet/>

@@ -1,5 +1,11 @@
 import axios from "axios";
 
+
+const userRegister = async(apiData)=>{
+  const response = await axios.post("/api/v1/users/register",apiData);
+  return response.data;
+}
+
 const userSignIn = async (apiData) => {
   const response = await axios.post("/api/v1/users/login", apiData);
 
@@ -14,6 +20,7 @@ const userLogout = async()=>{
 }
 
 const authService = {
+  userRegister,
   userSignIn,
   userLogout,
 };

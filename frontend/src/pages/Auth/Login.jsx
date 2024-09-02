@@ -4,16 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { userSignIn } from "../../redux/auth/auth.slice";
+import { validateEmail } from "../../utils/validation";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  const validateEmail = (email) => {
-    return /\S+@\S+\.\S+/.test(email); // Basic email validation regex
-  };
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -41,8 +38,8 @@ const Login = () => {
   };
 
   return (
-    <div className="container">
-      <section className="pl-[10rem] flex justify-center">
+    <div className="">
+      <section className="pl-[10rem] flex flex-wrap">
         <div className="mr-[4rem] mt-[5rem] ">
           <h1 className="text-2xl font-semibold mb-4">Sign In</h1>
           <form onSubmit={submitHandler} className="container w-[40rem]">
