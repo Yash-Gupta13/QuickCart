@@ -19,10 +19,19 @@ const userLogout = async()=>{
   return response.data
 }
 
+const userRefreshAccessToken = async()=>{
+  const response = await axios.post("/api/v1/users/refresh-token",{
+    withCredentials:true
+  });
+
+  return response.data;
+}
+
 const authService = {
   userRegister,
   userSignIn,
   userLogout,
+  userRefreshAccessToken,
 };
 
 export default authService;

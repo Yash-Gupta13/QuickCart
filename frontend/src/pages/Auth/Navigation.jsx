@@ -11,12 +11,18 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Navigation.css";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogout } from "../../redux/auth/auth.slice";
+import { getAccessToken, getRefreshToken } from "../../utils/getToken";
+
+
 
 const Navigation = () => {
   const [dropDown, setDropDown] = useState(false);
   const [showSidebar, setShowSidebar] = useState(false);
 
-  const { user } = useSelector((state) => state.auth);
+  const {user } = useSelector((state) => state.auth);
+
+  const accessToken = getAccessToken();
+  const refreshToken = getRefreshToken();
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,6 +30,7 @@ const Navigation = () => {
   const toggleDropDown = () => {
     setDropDown(!dropDown);
   };
+
 
   const toggleSideBar = () => {
     setShowSidebar(!showSidebar);

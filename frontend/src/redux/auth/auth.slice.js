@@ -61,6 +61,23 @@ export const userLogout = createAsyncThunk(
   }
 );
 
+export const userRefreshAccessToken = createAsyncThunk(
+  "auth/userRefreshAccessToken",
+  async (_, thunkApi) => {
+    try {
+      return await authService.userRefreshAccessToken();
+    } catch (error) {
+      const message =
+        (error.response &&
+          error.response.data &&
+          error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkApi.rejectWithValue(message);
+    }
+  }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -121,7 +138,27 @@ const authSlice = createSlice({
         state.user = null;
         state.message = action.payload;
         toast.error(action.payload);
-      });
+      })
+      .addCase(userRefreshAccessToken.pending , (state, action)=>{
+        state.isLoading = true;
+      })
+      .addCase(userRefreshAccessToken.fulfilled , (state,action)=>{
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.message = action.payload.message;
+        toast.success(action.payload.message);
+      })
+      .addCase(userRefreshAccessToken.rejected , (state, action)=>{
+        state.isError=true;
+        state.isLoading=false;
+        state.isSuccess=false;
+        state.user = null;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
+      
+      
   },
 });
 
