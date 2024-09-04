@@ -81,7 +81,11 @@ export const userRefreshAccessToken = createAsyncThunk(
 const authSlice = createSlice({
   name: "auth",
   initialState,
-  reducers: {},
+  reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(userRegister.pending, (state, action) => {
@@ -139,27 +143,25 @@ const authSlice = createSlice({
         state.message = action.payload;
         toast.error(action.payload);
       })
-      .addCase(userRefreshAccessToken.pending , (state, action)=>{
+      .addCase(userRefreshAccessToken.pending, (state, action) => {
         state.isLoading = true;
       })
-      .addCase(userRefreshAccessToken.fulfilled , (state,action)=>{
+      .addCase(userRefreshAccessToken.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
         state.message = action.payload.message;
         toast.success(action.payload.message);
       })
-      .addCase(userRefreshAccessToken.rejected , (state, action)=>{
-        state.isError=true;
-        state.isLoading=false;
-        state.isSuccess=false;
+      .addCase(userRefreshAccessToken.rejected, (state, action) => {
+        state.isError = true;
+        state.isLoading = false;
+        state.isSuccess = false;
         state.user = null;
         state.message = action.payload;
         toast.error(action.payload);
-      })
-      
-      
+      });
   },
 });
-
+export const {setUser} = authSlice.actions;
 export default authSlice.reducer;

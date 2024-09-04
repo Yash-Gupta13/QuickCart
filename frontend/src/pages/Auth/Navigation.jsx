@@ -11,8 +11,6 @@ import { Link, useNavigate } from "react-router-dom";
 import "./Navigation.css";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogout } from "../../redux/auth/auth.slice";
-import { getAccessToken, getRefreshToken } from "../../utils/getToken";
-
 
 
 const Navigation = () => {
@@ -20,10 +18,6 @@ const Navigation = () => {
   const [showSidebar, setShowSidebar] = useState(false);
 
   const {user } = useSelector((state) => state.auth);
-
-  const accessToken = getAccessToken();
-  const refreshToken = getRefreshToken();
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 

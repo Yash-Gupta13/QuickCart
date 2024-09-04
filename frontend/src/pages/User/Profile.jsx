@@ -1,25 +1,39 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { updateUserInfo } from "../../redux/user/user.slice";
+import { setUser } from "../../redux/auth/auth.slice";
 
 const Profile = () => {
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
 
+
   const {user} = useSelector((state)=>state.auth);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(()=>{
     if (user) {
         setUserName(user.username);
         setEmail(user.email)
     }
-  },[user.username , user.email ])
+  },[user])
 
-  const submitHandler = (e)=>{
+  const submitHandler = async(e)=>{
     e.preventDefault();
-    
+
+    const apiData = {
+        username,
+        email
+    }
+
+    const result = await dispatch(updateUserInfo(apiData));
+    if (result.meta.requestStatus === "fulfilled") {
+      dispatch(setUser(result.payload.data));
+      navigate('/');
+    }
 
   }
   
