@@ -307,7 +307,7 @@ const deleteUserById = asyncHandler(async(req, res)=>{
 
     return res
     .status(200)
-    .json(new ApiResponse(200 , "User Deleted Successfully" , deletedUser))
+    .json(new ApiResponse(200 , "User Deleted Successfully" , {}))
 
 
 })

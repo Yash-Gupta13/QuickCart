@@ -5,6 +5,7 @@ import { updateUserInfo } from "../../redux/user/user.slice";
 import { setUser } from "../../redux/auth/auth.slice";
 
 const Profile = () => {
+
   const [username, setUserName] = useState("");
   const [email, setEmail] = useState("");
 
@@ -68,9 +69,26 @@ const Profile = () => {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
+            <div className="mt-4 mb-4 text-right">
+              <p className="text-white">
+                <Link to="/changePassword" className="text-white hover:underline hover:text-pink-500">
+                  Change Password ?
+                </Link>
+              </p>
+            </div>
             <div className="flex justify-between">
-              <button type="submit" className="bg-pink-500 rounded text-white py-2 px-4 hover:bg-pink-600">Update</button>
-              <Link to={'/user-order'} className="bg-pink-500 rounded text-white py-2 px-4 hover:bg-pink-600">My Order</Link>
+              <button
+                type="submit"
+                className="bg-pink-500 rounded text-white py-2 px-4 hover:bg-pink-600"
+              >
+                Update
+              </button>
+              <Link
+                to={"/user-order"}
+                className="bg-pink-500 rounded text-white py-2 px-4 hover:bg-pink-600"
+              >
+                My Order
+              </Link>
             </div>
           </form>
         </div>

@@ -8,9 +8,18 @@ const updateUserInfo = async(apiData)=>{
     return response.data;
 }
 
+const changePassword = async(apiData)=>{
+    const response = await axios.post('/api/v1/users/profile/change-password' , apiData , {
+        withCredentials : true
+    })
+
+    return response.data;
+}
+
 
 const userService = {
-    updateUserInfo
+    updateUserInfo,
+    changePassword
 }
 
 export default userService

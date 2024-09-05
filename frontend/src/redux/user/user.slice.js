@@ -27,6 +27,23 @@ export const updateUserInfo = createAsyncThunk(
   }
 );
 
+export const changeOldPassword = createAsyncThunk(
+    "user/changePassword",
+    async (apiData , thunkApi)=>{
+        try {
+            return await userService.changePassword(apiData);
+        } catch (error) {
+            const message =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            return thunkApi.rejectWithValue(message);
+        }
+    }
+);
+
 
 const userSlice = createSlice({
   name: "user",
@@ -50,6 +67,23 @@ const userSlice = createSlice({
         state.isSuccess = false;
         state.isError = true;
         state.user = null;
+        state.message = action.payload;
+        toast.error(action.payload);
+    })
+    .addCase(changeOldPassword.pending , (state, action)=>{
+        state.isLoading = true;
+    })
+    .addCase(changeOldPassword.fulfilled , (state, acttion)=>{
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.message = acttion.payload.message;
+        toast.success(acttion.payload.message);
+    })
+    .addCase(changeOldPassword.rejected , (state, action)=>{
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
         state.message = action.payload;
         toast.error(action.payload);
     })
