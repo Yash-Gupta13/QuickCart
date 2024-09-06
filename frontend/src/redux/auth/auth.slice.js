@@ -78,6 +78,23 @@ export const userRefreshAccessToken = createAsyncThunk(
   }
 );
 
+export const checkAuth = createAsyncThunk(
+    "auth/checkAuth",
+    async(_,thunkApi)=>{
+        try {
+            return await authService.checkAuth();
+        } catch (error) {
+             const message =
+               (error.response &&
+                 error.response.data &&
+                 error.response.data.message) ||
+               error.message ||
+               error.toString();
+             return thunkApi.rejectWithValue(message);
+        }
+    }
+);
+
 const authSlice = createSlice({
   name: "auth",
   initialState,
@@ -160,7 +177,26 @@ const authSlice = createSlice({
         state.user = null;
         state.message = action.payload;
         toast.error(action.payload);
-      });
+      })
+      .addCase(checkAuth.pending , (state, action)=>{
+        state.isLoading = true;
+      })
+      .addCase(checkAuth.fulfilled , (state,action)=>{
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.user = action.payload.data;
+        state.message = action.payload.message;
+        toast.success(action.payload.message);
+      })
+      .addCase(checkAuth.rejected , (state,action)=>{
+        state.isLoading = false;
+        state.isError = true;
+        state.isSuccess = false;
+        state.user = null;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
   },
 });
 export const {setUser} = authSlice.actions;

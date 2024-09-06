@@ -1,6 +1,5 @@
 import axios from "axios";
 
-
 const userRegister = async(apiData)=>{
   const response = await axios.post("/api/v1/users/register",apiData);
   return response.data;
@@ -27,11 +26,21 @@ const userRefreshAccessToken = async()=>{
   return response.data;
 }
 
+const checkAuth = async()=>{
+  const response = await axios.post("/api/v1/users/checkAuth",{
+    withCredentials:true
+  });
+
+  return response.data;
+
+}
+
 const authService = {
   userRegister,
   userSignIn,
   userLogout,
   userRefreshAccessToken,
+  checkAuth
 };
 
 export default authService;

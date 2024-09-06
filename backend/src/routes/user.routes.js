@@ -10,6 +10,7 @@ import {
   updateUserProfileInfo,
   deleteUserById,
   updateUserById,
+  checkAuth,
 } from "../controllers/user.controller.js";
 import { verifyJWT, authorizeAdmin } from "../middlewares/auth.middleware.js";
 
@@ -30,6 +31,7 @@ router.route('/profile/update-profile').patch(verifyJWT, updateUserProfileInfo);
 
 //?when user accesstoken is expired then user hit the link
 router.route("/refresh-token").post(refreshAccessToken);
+router.route("/checkAuth").post(checkAuth);
 
 
 //!admin routes

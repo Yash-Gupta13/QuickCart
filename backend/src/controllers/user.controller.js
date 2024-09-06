@@ -57,9 +57,13 @@ const registerUser = asyncHandler(async (req, res) => {
     password,
   });
 
-  const {accessToken , refreshToken} = await generateAcessAndRefreshToken(user?._id);
+  const { accessToken, refreshToken } = await generateAcessAndRefreshToken(
+    user?._id
+  );
 
-  const createdUser = await User.findById(user._id).select("-password -refreshToken");
+  const createdUser = await User.findById(user._id).select(
+    "-password -refreshToken"
+  );
 
   if (!createdUser) {
     return res
@@ -260,104 +264,129 @@ const updateUserProfileInfo = asyncHandler(async (req, res) => {
       req.user?._id,
       {
         $set: {
-          username : newUsername,
-          email : newEmail,
+          username: newUsername,
+          email: newEmail,
         },
       },
       {
         new: true,
       }
     ).select("-password -refreshToken");
-  
+
     return res
       .status(200)
       .json(new ApiResponse(200, "Profile Update Successfully", user));
-
   } catch (error) {
-        return res
-        .status(401)
-        .json(new ApiError(401, "Invalid user"));
+    return res.status(401).json(new ApiError(401, "Invalid user"));
   }
 });
 
-const deleteUserById = asyncHandler(async(req, res)=>{
-    const {id} = req.params;
+const deleteUserById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
 
-    if(!id){
-        return res
-        .status(401)
-        .json(new ApiError(401 , "Id not found "))
-    }
+  if (!id) {
+    return res.status(401).json(new ApiError(401, "Id not found "));
+  }
 
-    const user = await User.findById(id);
+  const user = await User.findById(id);
 
-    if(!user){
-        return res
-        .status(404)
-        .json(new ApiError(404 , "User not found"));
-    }
+  if (!user) {
+    return res.status(404).json(new ApiError(404, "User not found"));
+  }
 
-    if(user.isAdmin){
-        return res
-        .status(400)
-        .json(new ApiError(400, "Cannot delete Admin user"))
-    }
+  if (user.isAdmin) {
+    return res.status(400).json(new ApiError(400, "Cannot delete Admin user"));
+  }
 
-    const deletedUser = await User.findByIdAndDelete(id);
+  const deletedUser = await User.findByIdAndDelete(id);
 
-    return res
+  return res
     .status(200)
-    .json(new ApiResponse(200 , "User Deleted Successfully" , {}))
+    .json(new ApiResponse(200, "User Deleted Successfully", {}));
+});
 
+const checkAuth = asyncHandler(async (req, res) => {
+  const accessToken = req.cookies?.accessToken;
+  const refreshToken = req.cookies?.refreshToken;
 
-})
+  if (!accessToken && !refreshToken) {
+    return res
+      .status(401)
+      .json(new ApiError(401, "Session is Expired please Login"));
+  }
 
-
-const updateUserById = asyncHandler(async(req, res)=>{
-    const {id} = req.params;
-
-    const {username , email , isAdmin} = req.body;
-
-    if(!id){
-        return res
-        .status(401)
-        .json(new ApiError(401, "Id not found"));
-    }
+  if (!accessToken && refreshToken) {
+    const decodeRefreshToken = await jwt.verify(
+      refreshToken,
+      process.env.REFRESHTOKEN_SECRET
+    );
 
     try {
-        const user = await User.findById(id);
-    
-        if(!user){
-            return res
-            .status(401)
-            .json(new ApiError(404 , "User not found"));
-        }
-    
-        user.username = username || user.username;
-        user.email = email || user.email;
-        user.isAdmin = Boolean(isAdmin);
-    
-    
-        const updatedUser = await user.save();
+      const user = await User.findById(decodeRefreshToken?._id);
 
+      if (!user) {
+        return res.status(401).json(new ApiError(401, "Unauthorized Access"));
+      }
 
-        const modifiedUser = await User.findById(updatedUser._id).select("-password -refreshToken");
+      //console.log(`old refreshtoken`, user.refreshToken);
 
-
+      if (refreshToken !== user.refreshToken) {
         return res
-          .status(200)
-          .json(new ApiResponse(200, "User updated succesfully", modifiedUser));
+          .status(401)
+          .json(new ApiError(401, "Token is expired or used"));
+      }
 
+      const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+        await generateAcessAndRefreshToken(user._id);
+      //console.log(`new refreshToken`, refreshToken)
+      //console.log(`new accessToken`, accessToken)
 
-
+      return res
+        .status(200)
+        .cookie("accessToken", newAccessToken, COOKIE_OPTIONS)
+        .cookie("refreshToken", newRefreshToken, COOKIE_OPTIONS)
+        .json(new ApiResponse(200, "RefreshToken refreshed", req?.user));
     } catch (error) {
-        return res
-        .status(404)
-        .json(new ApiError(404 , "Something went wrong"));
+      return res
+        .status(401)
+        .json(new ApiError(401, error?.message || "Invalid Refresh Token"));
+    }
+  }
+});
+
+const updateUserById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const { username, email, isAdmin } = req.body;
+
+  if (!id) {
+    return res.status(401).json(new ApiError(401, "Id not found"));
+  }
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(401).json(new ApiError(404, "User not found"));
     }
 
-})
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.isAdmin = Boolean(isAdmin);
 
+    const updatedUser = await user.save();
+
+    const modifiedUser = await User.findById(updatedUser._id).select(
+      "-password -refreshToken"
+    );
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "User updated succesfully", modifiedUser));
+  } catch (error) {
+    return res.status(404).json(new ApiError(404, "Something went wrong"));
+  }
+});
 
 export {
   registerUser,
@@ -369,5 +398,6 @@ export {
   changeOldPassword,
   updateUserProfileInfo,
   deleteUserById,
-  updateUserById
+  updateUserById,
+  checkAuth
 };

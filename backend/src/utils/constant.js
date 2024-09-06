@@ -1,6 +1,6 @@
 export const COOKIE_OPTIONS = {
   httpOnly: true,
-  secure: false, // do true in lie site
+  secure: true, // do true in lie site
   sameSite: "None",
 };
 

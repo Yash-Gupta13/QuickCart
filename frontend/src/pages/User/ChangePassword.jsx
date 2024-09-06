@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { changeOldPassword } from "../../redux/user/user.slice";
+import { useNavigate } from "react-router";
 
 const ChangePassword = () => {
 
@@ -9,6 +10,7 @@ const ChangePassword = () => {
     const [newPassword , setNewPassword] = useState('');
 
     const dispatch = useDispatch();
+    const naviagte = useNavigate();
 
     const submitHandler = async(e)=>{
         
@@ -24,6 +26,13 @@ const ChangePassword = () => {
         }
 
         const response = await dispatch(changeOldPassword(apiData));
+        console.log(response);
+
+        if(response.meta.requestStatus === 'fulfilled'){
+            setNewPassword('');
+            setOldPassword('');
+            naviagte('/');
+        }
 
         console.log(response);
 

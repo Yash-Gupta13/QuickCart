@@ -7,6 +7,7 @@ const initialState = {
   isError: false,
   isSuccess: false,
   user: null,
+  users:null,
   message: "",
 };
 
@@ -43,6 +44,23 @@ export const changeOldPassword = createAsyncThunk(
         }
     }
 );
+
+export const getAllUsers = createAsyncThunk(
+    "user/getAllUser",
+    async(_ , thunkApi)=>{
+        try {
+            return await userService.getAllUsers();
+        } catch (error) {
+            const message =
+              (error.response &&
+                error.response.data &&
+                error.response.data.message) ||
+              error.message ||
+              error.toString();
+            return thunkApi.rejectWithValue(message);
+        }
+    }
+)
 
 
 const userSlice = createSlice({
@@ -84,6 +102,25 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+    })
+    .addCase(getAllUsers.pending,(state, action)=>{
+        state.isLoading = true;
+    })
+    .addCase(getAllUsers.fulfilled ,(state, action)=>{
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.users = action.payload.data;
+        state.message = action.payload.message;
+        toast.success(action.payload.message);
+    })
+    .addCase(getAllUsers.rejected , (state , action)=>{
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.users = null;
         state.message = action.payload;
         toast.error(action.payload);
     })

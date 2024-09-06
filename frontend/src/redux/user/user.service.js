@@ -16,10 +16,18 @@ const changePassword = async(apiData)=>{
     return response.data;
 }
 
+const getAllUsers = async()=>{
+    const response = await axios.get('/api/v1/users/get-all-user',{
+        withCredentials : true
+    })
+
+    return response.data;
+}
 
 const userService = {
     updateUserInfo,
-    changePassword
+    changePassword,
+    getAllUsers
 }
 
 export default userService
