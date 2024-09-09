@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import  userService  from "./user.service";
 import { toast } from "react-toastify";
+import authService from "../auth/auth.service";
 
 const initialState = {
   isLoading: false,
@@ -62,6 +63,40 @@ export const getAllUsers = createAsyncThunk(
     }
 )
 
+export const updateUserInfoById = createAsyncThunk(
+  "user/updateUserById",
+  async(apiData,thunkApi)=>{
+    try {
+     return await userService.updateUserInfoById(apiData);
+    } catch (error) {
+       const message =
+         (error.response &&
+           error.response.data &&
+           error.response.data.message) ||
+         error.message ||
+         error.toString();
+       return thunkApi.rejectWithValue(message);
+    }
+  }
+)
+
+export const deleteUserById = createAsyncThunk(
+  "user/deleteUserById",
+  async(apiData,thunkApi)=>{
+    try {
+      return await userService.deleteUserById(apiData);
+    } catch (error) {
+       const message =
+         (error.response &&
+           error.response.data &&
+           error.response.data.message) ||
+         error.message ||
+         error.toString();
+       return thunkApi.rejectWithValue(message);
+    }
+  }
+)
+
 
 const userSlice = createSlice({
   name: "user",
@@ -69,61 +104,95 @@ const userSlice = createSlice({
   reducers: {},
   extraReducers : (builder)=>{
     builder
-    .addCase(updateUserInfo.pending,(state, action)=>{
+      .addCase(updateUserInfo.pending, (state, action) => {
         state.isLoading = true;
-    })
-    .addCase(updateUserInfo.fulfilled , (state , action)=>{
+      })
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
         state.user = action.payload.data;
         state.message = action.payload.message;
         toast.success(action.payload.message);
-    })
-    .addCase(updateUserInfo.rejected , (state,action)=>{
+      })
+      .addCase(updateUserInfo.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
         state.user = null;
         state.message = action.payload;
         toast.error(action.payload);
-    })
-    .addCase(changeOldPassword.pending , (state, action)=>{
+      })
+      .addCase(changeOldPassword.pending, (state, action) => {
         state.isLoading = true;
-    })
-    .addCase(changeOldPassword.fulfilled , (state, acttion)=>{
+      })
+      .addCase(changeOldPassword.fulfilled, (state, acttion) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
         state.message = acttion.payload.message;
         toast.success(acttion.payload.message);
-    })
-    .addCase(changeOldPassword.rejected , (state, action)=>{
+      })
+      .addCase(changeOldPassword.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
         state.message = action.payload;
         toast.error(action.payload);
-    })
-    .addCase(getAllUsers.pending,(state, action)=>{
+      })
+      .addCase(getAllUsers.pending, (state, action) => {
         state.isLoading = true;
-    })
-    .addCase(getAllUsers.fulfilled ,(state, action)=>{
+      })
+      .addCase(getAllUsers.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
         state.isError = false;
         state.users = action.payload.data;
         state.message = action.payload.message;
         toast.success(action.payload.message);
-    })
-    .addCase(getAllUsers.rejected , (state , action)=>{
+      })
+      .addCase(getAllUsers.rejected, (state, action) => {
         state.isLoading = false;
         state.isSuccess = false;
         state.isError = true;
         state.users = null;
         state.message = action.payload;
         toast.error(action.payload);
-    })
+      })
+      .addCase(updateUserInfoById.pending,(state , action)=>{
+        state.isLoading = true;
+      })
+      .addCase(updateUserInfoById.fulfilled , (state, action)=>{
+         state.isLoading = false;
+         state.isSuccess = true;
+         state.isError = false;
+         state.message = action.payload.message;
+         toast.success(action.payload.message);
+      })
+      .addCase(updateUserInfoById.rejected , (state, action)=>{
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
+      .addCase(deleteUserById.pending,(state,action)=>{
+        state.isLoading=true;
+      })
+      .addCase(deleteUserById.fulfilled,(state,action)=>{
+        state.isLoading = false;
+        state.isSuccess = true;
+        state.isError = false;
+        state.message = action.payload.message;
+        toast.success(action.payload.message);
+      })
+      .addCase(deleteUserById.rejected,(state,action)=>{
+        state.isLoading = false;
+        state.isSuccess = false;
+        state.isError = true;
+        state.message = action.payload;
+        toast.error(action.payload);
+      })
   }
 });
 

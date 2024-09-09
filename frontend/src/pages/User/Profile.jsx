@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { updateUserInfo } from "../../redux/user/user.slice";
 import { setUser } from "../../redux/auth/auth.slice";
 

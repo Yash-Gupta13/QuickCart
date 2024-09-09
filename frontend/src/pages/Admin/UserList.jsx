@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsers } from "../../redux/user/user.slice";
+import { deleteUserById, getAllUsers, updateUserInfoById } from "../../redux/user/user.slice";
 import { useEffect, useState } from "react";
 import {FaCheck , FaEdit ,FaTimes ,FaTrash} from 'react-icons/fa'
 import Loader from "../../components/Loader";
@@ -23,11 +23,36 @@ const UserList = () => {
   }
 
   const updateHandler = async(id)=>{
+    const apiData = {
+      id:id,
+      username:editableUserName,
+      email : editableUserEmail
+    }
+
+    try {
+      const response = await dispatch(updateUserInfoById(apiData));
+      await dispatch(getAllUsers());
+      setEditableUserId(null);
+    } catch (error) {
+      console.log(`Error in update Handler`,error);
+    }
+
     
   }
 
   const deleteHandler = async(id)=>{
+      const apiData = {
+        id
+      }
 
+      if(window.confirm("Are you sure to delte this user ?")){
+        try {
+          const response = await dispatch(deleteUserById(apiData));
+          await dispatch(getAllUsers());
+        } catch (error) {
+          console.log(`Error in deleting the user`, error);
+        }
+      }
   }
 
 
@@ -37,11 +62,9 @@ const UserList = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-semibold mb-4">Users</h1>
+      <h1 className="text-2xl font-semibold mb-4 text-center mb-10">Users</h1>
       {isLoading ? (
         <Loader />
-      ) : isError ? (
-        <Message variant={"danger"}>{message}</Message>
       ) : (
         <div className="flex flex-col md:flex-row">
           <table className="w-full md:w-4/5 mx-auto">
@@ -64,7 +87,7 @@ const UserList = () => {
                         <input
                           type="text"
                           value={editableUserName}
-                          onChange={(e) => setEditableUserEmail(e.target.value)}
+                          onChange={(e) => setEditableUserName(e.target.value)}
                           className="py-2 w-full border rounded-lg"
                         />
                         <button
@@ -77,13 +100,15 @@ const UserList = () => {
                     ) : (
                       <div className="flex items-center">
                         {user.username}{" "}
-                        <button
-                          onClick={() =>
-                            toggleEdit(user._id, user.username, user.email)
-                          }
-                        >
-                          <FaEdit className="ml-[1rem]" />
-                        </button>
+                        {!user?.isAdmin ? (
+                          <button
+                            onClick={() =>
+                              toggleEdit(user._id, user.username, user.email)
+                            }
+                          >
+                            <FaEdit className="ml-[1rem]" />
+                          </button>
+                        ) : null}
                       </div>
                     )}
                   </td>
@@ -106,13 +131,13 @@ const UserList = () => {
                     ) : (
                       <div className="flex items-center">
                         <a href={`mailto:${user.email}`}>{user.email}</a>{" "}
-                        <button
+                        {!user?.isAdmin ? (<button
                           onClick={() =>
                             toggleEdit(user._id, user.name, user.email)
                           }
                         >
                           <FaEdit className="ml-[1rem]" />
-                        </button>
+                        </button>):null}
                       </div>
                     )}
                   </td>

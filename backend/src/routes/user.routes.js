@@ -36,8 +36,8 @@ router.route("/checkAuth").post(checkAuth);
 
 //!admin routes
 
-router.route('/admin/:id').delete(verifyJWT,authorizeAdmin,deleteUserById);
-router.route('/admin/update-user-info/:id').patch(verifyJWT,authorizeAdmin,updateUserById);
+router.route('/delete-user/:id').delete(verifyJWT,authorizeAdmin,deleteUserById);
+router.route('/update-user-info/:id').patch(verifyJWT,authorizeAdmin,updateUserById);
 router.route("/get-all-user").get(verifyJWT, authorizeAdmin, getAllUser);
 
 
