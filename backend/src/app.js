@@ -17,5 +17,7 @@ app.use(cookieParser());
 //* Route section
 
 import userRouter from './routes/user.routes.js'
+import categoryRouter from './routes/category.routes.js'
 
 app.use('/api/v1/users',userRouter)
+app.use('/api/v1/category' , categoryRouter)
