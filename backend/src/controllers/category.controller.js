@@ -94,7 +94,7 @@ const getAllCategory = asyncHandler(async(req, res)=>{
         .status(401)
         .json(new ApiError(401, "Unable to get the Categories"));
     }
-    
+
 
     return res
     .status(200)
